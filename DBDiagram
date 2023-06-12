@@ -1,0 +1,159 @@
+Table Customer {
+  retailerId            INT         [ref: > LineItem.retailerId, note: "Hashed Retailer ID"]
+  customerId            VARCHAR     [PK, note: "Unique ID tied to an individual customer"]
+  accountStatus         VARCHAR     [note: "Status of customer`s loyalty account (ENROLLED, UNENROLLED, CANCELLED, ON HOLD)"]
+  optInFlag             VARCHAR     [note: "Indicates if customer opted in to any loyalty program “opt-in offering(s)”. Note: Opt-in offering(s) differs across programs, i.e. promotion offers, email/text campaigns, in-store e-receipts"]
+  gender                VARCHAR     [note: "Gender of customer"]
+  age                   VARCHAR     [note: "Age of customer"]
+  city                  VARCHAR     [note: "City of customer"]
+  state                 VARCHAR     [note: "State of customer, enriched to standard 'State (Abbreviation)' format or “UNKNOWN”"]
+  zip                   VARCHAR     [note: "Postal code of customer, enriched to standard 5 digit postal code or “UNKNOWN”"]
+  dateCreated           DATETIME    [note: "(Internal Field) Timestamp when record added to Insights Cloud database (UTC)"]
+  variableData          JSON        [note: "Concatenation of any other Customer fields: activationDate, address1, address2, birthDate, cancellationDate, cardNumber, country, createdAt, dollarsRedeemed, driversLicense, email, enrollmentStatus, firstName, firstRedemptionDate, firstTransactionCashier, firstTransactionDate, firstTransactionLocationId, lastName, lastPurchaseDate, lastRedemptionDate, lifetimePoints, locationEnrolled, middleName, mobile, mothersMaiden, optIn (Opt In in app), originalAge, originalCity, originalGender, originalState, originalZip, parentCardNumber, phone, triggerGroup, updatedAt"]
+  dateExported          DATETIME    [note: "Date when record was exported to client"]
+}
+
+Table LineItem {
+  retailerId            INT         [note: "Hashed Retailer ID"]
+  transactionId         VARCHAR     [PK, note: "Transaction ID"]
+  itemId                VARCHAR     [note: "UPC (only)"]
+  productId             VARCHAR     [note: "Product code"]
+  storeId               VARCHAR     [note: "Store ID (only)"]
+  unitCost              DECIMAL     [note: "Weighted average unit cost"]
+  extendedAmount        DECIMAL     [note: "Unit sales price of item sold"]
+  salesAmount           DECIMAL     [note: "Sales amount"]
+  regularSalesUnitPrice DECIMAL     [note: "Retail price"]
+  description           VARCHAR     [note: "Item description"]
+  dateProcessed         DATETIME    [note: "Transaction date"]
+  quantity              DECIMAL     [note: "Number of items purchased"]
+  packSize              VARCHAR     [note: "Numeric pack size"]
+  promotionId           VARCHAR     [note: "Promotion ID"]
+  lineNumber            VARCHAR     [note: "Transaction line number of given item purchase"]
+  dateCreated           DATETIME    [note: "(Internal Field) Timestamp when record added to Insights Cloud database (UTC)"]
+  variableData          JSON        [note: "Concatenation of any other LineItem fields: dispenserNo, forgivenTaxableAmount, hoseNumber, itemType, marketBasketTaxCodeKeys, pbShelfPrice, pbStandardPrice, posShelfPrice, priceCorrectionFlag, retailPromotionFlag, retailPromotionKey, singleQuantitySold, taxableAmount, taxExemptedFlag, taxOverriddenFlag"]
+  dateExported          DATETIME    [note: "Date when record was exported to client"]
+}
+
+Table LocationsBrand {
+  retailerId                       INT        [ref: > LineItem.retailerId, note: "Hashed Retailer ID"]
+  organizationKey                  VARCHAR    [note: "Retailer store ID"]
+  storeId                          VARCHAR    [PK, ref: > LineItem.storeId, note: "Retailer store ID"]
+  storeName                        VARCHAR    [note: "Retailer store name"]
+  openDate                         DATETIME   [note: "Retailer store open date"]
+  closeDate                        DATETIME   [note: "Retailer store close date"]
+  latitude                         FLOAT      [note: "Retailer latitude"]
+  longitude                        FLOAT      [note: "Retailer longitude"]
+  address1                         VARCHAR    [note: "Retailer store address 1"]
+  address2                         VARCHAR    [note: "Retailer store address 2"]
+  city                             VARCHAR    [note: "Retailer city"]
+  state                            VARCHAR    [note: "Retailer state"]
+  zip                              VARCHAR    [note: "Retailer zip code"]
+  dateCreated                      DATETIME   [note: "(Internal Field) Timestamp when record added to Insights Cloud database (UTC)"]
+  variableData_dateRebuiltReopened VARCHAR    [note: "Retailer date rebuilt reopened, brand defined"]
+  variableData_dateRemodelReopened VARCHAR    [note: "Retailer date remodeled reopened, brand defined"]
+  variableData_status              VARCHAR    [note: "Retailer status, brand defined"]
+  variableData_region              VARCHAR    [note: "Retailer region, brand defined"]
+  variableData_bottler             VARCHAR    [note: "Retailer bottler, brand defined"]
+  variableData_storeType           VARCHAR    [note: "Retailer store type, brand defined"]
+  variableData_area                VARCHAR    [note: "Retailer area, brand defined"]
+  variableData_countyParish        VARCHAR    [note: "Retailer county parish, brand defined"]
+  variableData_phoneNumber         VARCHAR    [note: "Retailer phone number, brand defined"]
+  variableData_faxNumber           VARCHAR    [note: "Retailer fax number, brand defined"]
+}
+
+Table LocationsRetailer {
+  retailerId                      INT        [ref: > LineItem.retailerId, note: "Hashed Retailer ID"]
+  storeNumber                     VARCHAR    [note: "Store Number"]
+  storeId                         VARCHAR    [PK, ref: > LineItem.storeId, note: "Store ID"]
+  longName                        VARCHAR    [note: "Full Store Name"]
+  openDate                        DATETIME   [note: "Store Open Date"]
+  closeDate                       DATETIME   [note: "Store Close Date"]
+  latitude                        FLOAT      [note: "Latitude"]
+  longitude                       FLOAT      [note: "Longitude"]
+  address1                        VARCHAR    [note: "Address 1"]
+  address2                        VARCHAR    [note: "Address 2"]
+  city                            VARCHAR    [note: "City"]
+  state                           VARCHAR    [note: "State"]
+  postalCode                      VARCHAR    [note: "Store Postal Code"]
+  dateCreated                     DATETIME   [note: "(Internal Field) Timestamp when record added to Insights Cloud database (UTC)"]
+  variableData                    JSON       [note: "Concatenation of any other Locations fields: businessUnit (Business Unit in app), districtManager (District Manager in app), hasBankInStore, market (Market in app), region (Region in app), regionalManager (Regional Manager in app), squareFootage, storeType (Store Type in app)"]
+  dateExported                    DATETIME   [note: "Date when record was exported to client"]
+}
+
+Table ProductBrand {
+  years                           VARCHAR    [note: "Years"]
+  upc                             VARCHAR    [PK, ref: > LineItem.itemId, note: "Item Code (UPC/PLU/SKU) - Modified to include pack size"]
+  item                            VARCHAR    [note: "Description"]
+  koBusinessReviewCategory        VARCHAR    [note: "Business Review Category"]
+  koCategory                      VARCHAR    [note: "Category"]
+  koKeyManufacturer               VARCHAR    [note: "Manufacturer"]
+  koKeyTrademark                  VARCHAR    [note: "Trademark"]
+  koKeyBrand                      VARCHAR    [note: "Key Brand"]
+  koConsumption                   VARCHAR    [note: "Consumption"]
+  koKeyPackage                    VARCHAR    [note: "Package"]
+  koKeyFlavor                     VARCHAR    [note: "Flavor"]
+  dollars                         FLOAT      [note: "Dollars"]
+  dateCreated                     DATETIME   [note: "(Internal Field) Timestamp when record added to Insights Cloud database (UTC)"]
+}
+
+Table ProductRetailer {
+  retailerId                    INT        [ref: > LineItem.retailerId, note: "Hashed Retailer ID"]
+  productId                     VARCHAR    [note: "Internal product code (usually PDI Product ID)"]
+  upc                           VARCHAR    [PK, ref: > ProductBrand.upc, note: "Item Code (UPC/PLU/SKU)"]
+  originalUpc                   VARCHAR    [note: "Original UPC from POS, no modification"]
+  sellUnitDesc                  VARCHAR    [note: "Sell Unit Description"]
+  sellUnitQty                   VARCHAR    [note: "Sell Unit Quantity"]
+  description                   VARCHAR    [note: "Item Description"]
+  subCategoryId                 VARCHAR    [note: "Sub Category ID"]
+  subCategoryDescription        VARCHAR    [note: "Sub Category Description"]
+  category                      VARCHAR    [note: "Category ID"]
+  categorySubDescription        VARCHAR    [note: "Category Description"]
+  department                    VARCHAR    [note: "Department ID"]
+  deptDescription               VARCHAR    [note: "Department Description"]
+  brand                         VARCHAR    [note: "Brand"]
+  manufacturer                  VARCHAR    [note: "Manufacturer"]
+  itemType                      VARCHAR    [note: "Item Type"]
+  createDate                    DATETIME   [note: "Timestamp when record was added to PDI database"]
+  upcDiscontinueDate            DATETIME   [note: "UPC Discontinue Date"]
+  scanModifier                  VARCHAR    [note: "Scan Modifier"]
+  dateCreated                   DATETIME   [note: "(Internal Field) Timestamp when record added to Insights Cloud database (UTC)"]
+  privateLabelFlag              VARCHAR    [note: "Private Label Flag"]
+  cleanUpc                      VARCHAR    [note: "Clean Upc"]
+  masterCategory                VARCHAR    [note: "Internal field, Master Category"]
+  masterSubCategory             VARCHAR    [note: "Internal field, Master Sub Category"]
+  variableData                  JSON       [note: "Concatenation of any other Product fields: majorDepartmentDescription (Marketing Mapping in app), majorDepartmentId, package (Package in app), segmentDescription (Core in app), size (Size in app), subSegmentDescription (BMC in app)"]
+  dateExported                  DATETIME   [note: "Date when record was exported to client"]
+}
+
+Table Transaction {
+  transactionGrandAmount         DECIMAL   [PK, ref: > LineItem.salesAmount, note: "Total transaction amount"]
+  transactionTaxAmount           DECIMAL   [note: "Total Amount of Taxes (sales, liquor, etc.)"]
+  totalQuantity                  DECIMAL   [note: "Total Quantity"]
+  totalNoOfItems                 DECIMAL   [note: "Total Number of Items"]
+}
+
+Table TranslationBrandProduct {
+  upc                  VARCHAR    [PK, ref: > ProductBrand.upc, note: "Brand UPC"]
+  masterUpc            VARCHAR    [note: "Brand Master UPC"]
+  harmonizedUpc        VARCHAR    [note: "Brand Harmonized UPC (same as Master UPC)"]
+  masterCategory       VARCHAR    [note: "Brand Master Category (null)"]
+  masterSubCategory    VARCHAR    [note: "Brand Master Sub Category (null)"]
+}
+
+Table TranslationRetailerCustomer {
+  retailerId           INT        [ref: > LineItem.retailerId, note: "Hashed Retailer ID"]
+  loyaltyId            VARCHAR    [note: "Loyalty ID"]
+  customerId           VARCHAR    [PK, ref: > Customer.customerId, note: "Customer ID"]
+}
+
+Table TranslationRetailerProduct {
+  retailerId          INT        [ref: > LineItem.retailerId, note: "Hashed Retailer ID"]
+  upc                 VARCHAR    [PK, ref: > ProductBrand.upc, note: "Retailer UPC"]
+  masterUpc           VARCHAR    [note: "Retailer Master UPC"]
+  harmonizedUpc       VARCHAR    [note: "Retailer Harmonized UPC"]
+  masterCategory      VARCHAR    [note: "Retailer Master Category"]
+  masterSubCategory   VARCHAR    [note: "Retailer Master Sub Category"]
+}
+
+
+
