@@ -1,1 +1,13 @@
-This is a data diagram I built with a few relationships and data types shown. I used https://dbdiagram.io to write these and share them. I find this tool very useful when designing data diagrams.
+# Relational Data Modeling | DB Diagram
+
+A small data modeling exercise exploring table relationships, key constraints, and common data types.
+
+## Contents
+- `DBDiagram` — source diagram definition
+- `Diagram1.pdf` — exported diagram
+
+## Tools
+[dbdiagram.io](https://dbdiagram.io/)
+
+## Learning outcome
+Practiced representing relational schemas before implementing database-backed applications. This is a historical learning project, not a production system.
